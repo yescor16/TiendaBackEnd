@@ -6,6 +6,7 @@ using Core.Interfaces;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using StackExchange.Redis;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 
@@ -16,6 +17,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddCors();
 
 
 
@@ -25,8 +27,10 @@ builder.Services.AddDbContext<StoreContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("dbConnection"));
 });
 
+
+
 //Extensiones
-builder.Services.AddAplicationServices();
+builder.Services.AddAplicationServices(builder.Configuration);
 builder.Services.AddSwaggerDocumentation();
 
 
@@ -56,6 +60,16 @@ app.UseSwaggerDocumentation();
 
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseStatusCodePagesWithReExecute("/errors/{0}");
+
+
+app.UseCors(builder => builder
+     .AllowAnyOrigin()
+     .AllowAnyMethod()
+     .AllowAnyHeader());
+
+app.UseRouting();
+
+
 
 app.UseHttpsRedirection();
 
