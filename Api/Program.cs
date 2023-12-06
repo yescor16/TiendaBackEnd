@@ -2,8 +2,11 @@ using Api.Errors;
 using Api.Extensions;
 using Api.Helpers;
 using Api.Middleware;
+using Core.Entities.Identity;
 using Core.Interfaces;
 using Infrastructure.Data;
+using Infrastructure.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
@@ -22,14 +25,9 @@ builder.Services.AddCors();
 
 
 builder.Services.AddAutoMapper(typeof(MappingProfiles));
-builder.Services.AddDbContext<StoreContext>(options =>
-{
-    options.UseSqlServer(builder.Configuration.GetConnectionString("dbConnection"));
-});
-
-
 
 //Extensiones
+builder.Services.AddIdentityServices(builder.Configuration);
 builder.Services.AddAplicationServices(builder.Configuration);
 builder.Services.AddSwaggerDocumentation();
 
@@ -41,12 +39,22 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     
+    
     var loggerFactory = scope.ServiceProvider.GetRequiredService<ILoggerFactory>();
 	try
 	{
-        var context = scope.ServiceProvider.GetRequiredService<StoreContext>();
+        var services = scope.ServiceProvider;
+
+        var context = services.GetRequiredService<StoreContext>();
         await context.Database.MigrateAsync();
         await StorContextSeed.SeedAsync(context, loggerFactory);
+
+
+        var userManager = services.GetRequiredService<UserManager<AppUser>>();
+
+        var identityContext = services.GetRequiredService<AppIdentityDbContext>();
+        await identityContext.Database.MigrateAsync();
+        await AppIdentityDbContextSeed.SeedUserAsync(userManager);
     }
 	catch (Exception ex)
 	{
@@ -73,6 +81,7 @@ app.UseRouting();
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 app.UseStaticFiles();
 app.MapControllers();

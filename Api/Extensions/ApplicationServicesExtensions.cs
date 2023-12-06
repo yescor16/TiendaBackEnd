@@ -2,6 +2,7 @@
 using Core.Interfaces;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
 
 namespace Api.Extensions
@@ -10,6 +11,10 @@ namespace Api.Extensions
     {
         public static IServiceCollection AddAplicationServices(this IServiceCollection services, IConfiguration config)
         {
+            services.AddDbContext<StoreContext>(options =>
+            {
+                options.UseSqlServer(config.GetConnectionString("dbConnection"));
+            });
 
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
