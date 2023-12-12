@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using Microsoft.OpenApi.Models;
+using System.Runtime.CompilerServices;
 
 namespace Api.Extensions
 {
@@ -11,6 +12,25 @@ namespace Api.Extensions
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "API BACKEND", Version = "v1" });
+                var securitySchema = new OpenApiSecurityScheme
+                {
+                    Description = "JWT Bearer Scheme",
+                    Name = "Authorizatino",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "Bearer",
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
+                    }
+                };
+                c.AddSecurityDefinition("Bearer", securitySchema);
+                var securityRequeriments = new OpenApiSecurityRequirement
+                {
+                    {securitySchema,new[]{"Bearer"}}
+                };
+                c.AddSecurityRequirement(securityRequeriments);
             });
             return services;
         }
