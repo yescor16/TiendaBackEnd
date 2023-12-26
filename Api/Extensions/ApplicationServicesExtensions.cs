@@ -19,6 +19,7 @@ namespace Api.Extensions
             });
 
             services.AddScoped<IToken, TokenService>();
+            services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
