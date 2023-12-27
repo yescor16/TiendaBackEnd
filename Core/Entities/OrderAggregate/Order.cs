@@ -24,14 +24,15 @@ namespace Core.Entities.OrderAggregate
         }
 
         public string BuyerEmail { get; set; }
-        public DateTimeOffset OrderDate{ get;} = DateTimeOffset.Now;
+        public DateTime OrderDate { get; set; } = DateTime.UtcNow;
         public Address ShipToAddress { get; set; }
         public DeliveryMethod DeliveryMethod { get; set; }  
         public IReadOnlyList<OrderItem> OrderItems { get; set;}
         public decimal Subtotal { get; set; }
-        public OrderStatus Stsatus { get; set; } = OrderStatus.Pending;
+        public OrderStatus Status { get; set; } = OrderStatus.Pending;
         public int PaymentIntentId { get; set; }
-        public decimal GetTotal() {
+        public decimal GetTotal()
+        {
             return Subtotal + DeliveryMethod.Price;
         }
     }
