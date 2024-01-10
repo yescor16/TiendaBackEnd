@@ -2,6 +2,7 @@
 using AutoMapper;
 using Core.Entities;
 using Core.Interfaces;
+using Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 using static StackExchange.Redis.Role;
 
@@ -31,9 +32,10 @@ namespace Api.Controllers
         [HttpPost]
         public async Task<ActionResult<CustomerBasket>> UpdateBasket(CustomerBasketDto basketC)
         {
-            var customerBasket = mapper.Map<CustomerBasketDto, CustomerBasket>(basketC);
-          
+            var customerBasket = mapper.Map<CustomerBasket>(basketC);
+
             var updatedBasket = await basketRepository.UpdateBasketAsync(customerBasket);
+
             return Ok(updatedBasket);
         }
 
