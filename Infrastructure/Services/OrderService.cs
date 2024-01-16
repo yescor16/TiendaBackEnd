@@ -66,7 +66,7 @@ namespace Infrastructure.Services
             return await unitOfWork.Repository<DeliveryMethod>().ListAllAsync();
         }
 
-        public async Task<Order> GetOrdeerByIdAsync(int id, string buyerEmail)
+        public async Task<Order> GetOrderByIdAsync(int id, string buyerEmail)
         {
             var spec = new OrdersWithItemsAndOrderingSpecification(id, buyerEmail);
             return await unitOfWork.Repository<Order>().GetEntityWithSpec(spec);

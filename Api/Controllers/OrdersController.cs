@@ -49,7 +49,7 @@ namespace Api.Controllers
         public async Task<ActionResult<IReadOnlyList<OrderToReturnDto>>> GetOrdersByIdForUser(int id)
         {
             var email = HttpContext.User.RetrieveEmailFromPrincipal();
-            var order = await orderService.GetOrdeerByIdAsync(id, email);
+            var order = await orderService.GetOrderByIdAsync(id, email);
 
             if (order == null) return NotFound(new ApiResponse(400));
             return Ok(mapper.Map<Order,OrderToReturnDto>(order));
