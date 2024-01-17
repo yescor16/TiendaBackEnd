@@ -19,7 +19,7 @@ namespace Api.Controllers
             _whSecret = config.GetSection("StripeSettings:WhSecret").Value;
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpPost("{basketId}")]
         public async Task<ActionResult<CustomerBasket>> CreateOrUpdatePaymentIntent(string basketId)
         {
