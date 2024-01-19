@@ -1,8 +1,11 @@
 ﻿using Api.Errors;
 using Core.Entities;
+using Core.Entities.OrderAggregate;
 using Core.Interfaces;
+using Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Stripe;
 
 namespace Api.Controllers
 {
@@ -19,7 +22,7 @@ namespace Api.Controllers
             _whSecret = config.GetSection("StripeSettings:WhSecret").Value;
         }
 
-        //[Authorize]
+        [Authorize]
         [HttpPost("{basketId}")]
         public async Task<ActionResult<CustomerBasket>> CreateOrUpdatePaymentIntent(string basketId)
         {
@@ -28,6 +31,35 @@ namespace Api.Controllers
             if (basket == null) return BadRequest(new ApiResponse(400, "Problem with your basket"));
 
             return basket;
+        }
+
+
+        [HttpPost("webhook")]
+        public async Task<ActionResult> Stripewebhook()
+        {
+            var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
+
+            var stripeEvent = EventUtility.ConstructEvent(json, Request.Headers["Stripe-Signature"], _whSecret);
+
+            PaymentIntent intent;
+            Order order;
+
+            switch (stripeEvent.Type) {
+                case "payment_intent.succeded":
+                    intent = (PaymentIntent)stripeEvent.Data.Object;
+                    _logger.LogInformation("Payment Succeded", intent.Id);
+                    order = await _paymentService.UpdateOrderPaymentSucceeded(intent.Id);
+                    _logger.LogInformation("Payment Succeded", order.Id);
+                    break;
+                case "payment_intent.payment_failed":
+                    intent = (PaymentIntent)stripeEvent.Data.Object;
+                    _logger.LogInformation("Payment Failed", intent.Id);
+                    order = await _paymentService.UpdateOrderPaymentFailed(intent.Id);
+                    _logger.LogInformation("Payment Failed", order.Id);
+                    break;
+            }
+            return new EmptyResult();
+
         }
 
     }

@@ -30,6 +30,10 @@ namespace Infrastructure.Services
 
             var basket = await _basketRepository.GetBasketAsync(basketId);
 
+
+
+
+
             if (basket == null) return null;
 
             var shippingPrice = 0m;
@@ -100,6 +104,7 @@ namespace Infrastructure.Services
             if (order == null) return null;
 
             order.Status = OrderStatus.PaymentReceived;
+            _unitOfWork.Repository<Order>().Update(order);
             await _unitOfWork.Complete();
 
             return order;
