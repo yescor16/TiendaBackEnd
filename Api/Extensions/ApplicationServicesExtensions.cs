@@ -17,7 +17,7 @@ namespace Api.Extensions
             {
                 options.UseSqlServer(config.GetConnectionString("dbConnection"));
             });
-
+            services.AddSingleton<IResponseCacheService, ResponseCacheService>();
             services.AddScoped<IToken, TokenService>();
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
