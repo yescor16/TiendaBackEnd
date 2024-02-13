@@ -16,7 +16,18 @@ namespace Infrastructure.Data
         {
 			try
 			{
-				if (!context.ProductBrands.Any())
+                if (!context.Stores.Any())
+                {
+                    var storeData = File.ReadAllText("../Infrastructure/Data/SeedData/stores.json");
+                    var stores = JsonSerializer.Deserialize<List<Store>>(storeData);
+                    foreach (var item in stores)
+                    {
+                        context.Stores.Add(item);
+                    }
+                    await context.SaveChangesAsync();
+                }
+
+                if (!context.ProductBrands.Any())
 				{
 					var brandsData = File.ReadAllText("../Infrastructure/Data/SeedData/brands.json");
 					var brands = JsonSerializer.Deserialize<List<ProductBrand>>(brandsData);

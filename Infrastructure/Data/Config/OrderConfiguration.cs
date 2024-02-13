@@ -14,6 +14,7 @@ namespace Infrastructure.Data.Config
     {
         public void Configure(EntityTypeBuilder<Order> builder)
         {
+            builder.Property(p => p.Subtotal).HasColumnType("decimal(18,2)");
             builder.OwnsOne(o => o.ShipToAddress, a =>
             {
                 a.WithOwner();

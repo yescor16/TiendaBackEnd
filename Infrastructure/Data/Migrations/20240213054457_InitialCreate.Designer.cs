@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(StoreContext))]
-    [Migration("20231227055816_OrderEntityAdded")]
-    partial class OrderEntityAdded
+    [Migration("20240213054457_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -71,8 +71,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("PaymentIntentId")
-                        .HasColumnType("int");
+                    b.Property<string>("PaymentIntentId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -143,11 +144,16 @@ namespace Infrastructure.Data.Migrations
                     b.Property<int>("ProductTypeId")
                         .HasColumnType("int");
 
+                    b.Property<int>("StoreId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ProductBrandId");
 
                     b.HasIndex("ProductTypeId");
+
+                    b.HasIndex("StoreId");
 
                     b.ToTable("Products", (string)null);
                 });
@@ -184,6 +190,23 @@ namespace Infrastructure.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ProductTypes", (string)null);
+                });
+
+            modelBuilder.Entity("Core.Entities.Store", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Stores");
                 });
 
             modelBuilder.Entity("Core.Entities.OrderAggregate.Order", b =>
@@ -286,9 +309,17 @@ namespace Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Core.Entities.Store", "Store")
+                        .WithMany()
+                        .HasForeignKey("StoreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("ProductBrand");
 
                     b.Navigation("ProductType");
+
+                    b.Navigation("Store");
                 });
 
             modelBuilder.Entity("Core.Entities.OrderAggregate.Order", b =>

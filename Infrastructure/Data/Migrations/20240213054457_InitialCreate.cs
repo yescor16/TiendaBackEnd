@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Infrastructure.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class OrderEntityAdded : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -54,6 +54,19 @@ namespace Infrastructure.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Stores",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Stores", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Orders",
                 columns: table => new
                 {
@@ -70,7 +83,7 @@ namespace Infrastructure.Data.Migrations
                     DeliveryMethodId = table.Column<int>(type: "int", nullable: false),
                     Subtotal = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PaymentIntentId = table.Column<int>(type: "int", nullable: false)
+                    PaymentIntentId = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -94,7 +107,8 @@ namespace Infrastructure.Data.Migrations
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     PictureUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ProductTypeId = table.Column<int>(type: "int", nullable: false),
-                    ProductBrandId = table.Column<int>(type: "int", nullable: false)
+                    ProductBrandId = table.Column<int>(type: "int", nullable: false),
+                    StoreId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -109,6 +123,12 @@ namespace Infrastructure.Data.Migrations
                         name: "FK_Products_ProductTypes_ProductTypeId",
                         column: x => x.ProductTypeId,
                         principalTable: "ProductTypes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Products_Stores_StoreId",
+                        column: x => x.StoreId,
+                        principalTable: "Stores",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -156,6 +176,11 @@ namespace Infrastructure.Data.Migrations
                 name: "IX_Products_ProductTypeId",
                 table: "Products",
                 column: "ProductTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_StoreId",
+                table: "Products",
+                column: "StoreId");
         }
 
         /// <inheritdoc />
@@ -175,6 +200,9 @@ namespace Infrastructure.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "ProductTypes");
+
+            migrationBuilder.DropTable(
+                name: "Stores");
 
             migrationBuilder.DropTable(
                 name: "DeliveryMethods");
