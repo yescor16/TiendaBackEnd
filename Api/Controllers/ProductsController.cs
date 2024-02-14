@@ -17,18 +17,21 @@ namespace Api.Controllers
     {
         private readonly IGenericRepository<Product> productRepo;
         private readonly IGenericRepository<ProductBrand> brandRepo;
+        private readonly IGenericRepository<Store> StoreRepo;
         public IGenericRepository<ProductType> typeRepo { get; }
         public IMapper Mapper { get; }
 
         public ProductsController(IGenericRepository<Product> productRepo,
             IGenericRepository<ProductType> typeRepo,
             IGenericRepository<ProductBrand> brandRepo,
+            IGenericRepository<Store> StoreRepo,
             IMapper mapper
             )
         {
             this.productRepo = productRepo;
             this.typeRepo = typeRepo;
             this.brandRepo = brandRepo;
+            this.StoreRepo = StoreRepo;
             Mapper = mapper;
         }
 
@@ -63,7 +66,25 @@ namespace Api.Controllers
         }
 
 
-       // [Cached(6000)]
+        //Products by idStore
+        [HttpGet("GetProductsByStore")]
+        public async Task<ActionResult<Pagination<ProductToReturnDto>>> GetProductsByStore(
+            [FromQuery] ProductSpecParams productParams)
+        {
+            var spec = new ProductsWithStoreSpecification(productParams.StoreId);
+            var countSpec = new ProductsWithFiltersForCountSpecification(productParams);
+
+            var totalItems = await productRepo.CountAsync(countSpec);
+            var products = await productRepo.ListAsync(spec);
+
+            var data = Mapper.Map<IReadOnlyList<ProductToReturnDto>>(products);
+
+            return Ok(new Pagination<ProductToReturnDto>(productParams.PageIndex,
+                productParams.PageSize, totalItems, data));
+        }
+
+
+        // [Cached(6000)]
         [HttpGet("brands")]
         public async Task<ActionResult<IReadOnlyList<ProductBrand>>> GetProductBrands(int id)
         {
