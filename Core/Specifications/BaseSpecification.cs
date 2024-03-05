@@ -25,6 +25,7 @@ namespace Core.Specifications
         public Expression<Func<T, object>> OrderBy { get; private set; }
 
         public Expression<Func<T, object>> OrderByDescending { get; private set; }
+        public Expression<Func<T, object>> GroupBy { get; private set; }
 
         
 
@@ -43,7 +44,11 @@ namespace Core.Specifications
             OrderByDescending = orderByDescExpression;
         }
 
+        protected void AddGroupBy(Expression<Func<T, object>> GroupByExpression) {
+            GroupBy = GroupByExpression;
+        }
 
+       
 
 
         //pagination
@@ -53,7 +58,7 @@ namespace Core.Specifications
 
         public bool IsPagingEnabled { get; private set; }
 
-
+        
 
         protected void ApplyPaging(int skip, int take)
         {

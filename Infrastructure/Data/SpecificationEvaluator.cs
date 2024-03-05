@@ -29,6 +29,11 @@ namespace Infrastructure.Data
                 query = query.OrderByDescending(specification.OrderByDescending);
             }
 
+            //if (specification.GroupByAsync != null)
+            //{
+            //    query = (IQueryable<TEntity>)query.GroupBy(specification.GroupByAsync);
+            //}
+
             if (specification.IsPagingEnabled)
             {
                 query = query.Skip(specification.Skip).Take(specification.Take);

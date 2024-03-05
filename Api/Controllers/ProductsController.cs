@@ -9,6 +9,7 @@ using Core.Specifications;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace Api.Controllers
 {
@@ -71,7 +72,7 @@ namespace Api.Controllers
         public async Task<ActionResult<Pagination<ProductToReturnDto>>> GetProductsByStore(
             [FromQuery] ProductSpecParams productParams)
         {
-            var spec = new ProductsWithStoreSpecification(productParams.StoreId);
+            var spec = new ProductsWithTypesAndBrandsSpecification(productParams);
             var countSpec = new ProductsWithFiltersForCountSpecification(productParams);
 
             var totalItems = await productRepo.CountAsync(countSpec);
@@ -86,16 +87,22 @@ namespace Api.Controllers
 
         // [Cached(6000)]
         [HttpGet("brands")]
-        public async Task<ActionResult<IReadOnlyList<ProductBrand>>> GetProductBrands(int id)
+        public ActionResult<IReadOnlyList<ProductBrand>> GetProductBrands([FromQuery] ProductSpecParams productParams)
         {
-            return Ok(await brandRepo.ListAllAsync());
+            var spec = new BrandsWithFilterId(productParams.StoreId);
+            var products = productRepo.ListAsync(spec).Result.Select(x => x.ProductBrand).Distinct();
+           
+            return Ok(products);
         }
 
        // [Cached(6000)]
         [HttpGet("types")]
-        public async Task<ActionResult<IReadOnlyList<ProductType>>> GetProductTypes(int id)
+        public ActionResult<IReadOnlyList<ProductType>> GetProductTypes([FromQuery] ProductSpecParams productParams)
         {
-            return Ok(await typeRepo.ListAllAsync());
+            var spec = new TypeWithFilterId(productParams.StoreId);
+            var products = productRepo.ListAsync(spec).Result.Select(x => x.ProductType).Distinct();
+
+            return Ok(products);
 
         }
     }
