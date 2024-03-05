@@ -15,6 +15,5 @@
         public int StoreId { get; set; }
 
 
-        public List<PictureUrlProducts> PictureUrlProducts { get; set; }
     } 
 }
