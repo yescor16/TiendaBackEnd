@@ -18,6 +18,17 @@ namespace Infrastructure.Data
 			{
                 if (!context.Stores.Any())
                 {
+                    var categoryData = File.ReadAllText("../Infrastructure/Data/SeedData/categories.json");
+                    var categories = JsonSerializer.Deserialize<List<Category>>(categoryData);
+                    foreach (var item in categories)
+                    {
+                        context.Categories.Add(item);
+                    }
+                    await context.SaveChangesAsync();
+                }
+
+                if (!context.Stores.Any())
+                {
                     var storeData = File.ReadAllText("../Infrastructure/Data/SeedData/stores.json");
                     var stores = JsonSerializer.Deserialize<List<Store>>(storeData);
                     foreach (var item in stores)

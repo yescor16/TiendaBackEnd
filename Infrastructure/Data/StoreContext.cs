@@ -20,6 +20,7 @@ namespace Infrastructure.Data
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrdersItems { get; set; }
         public DbSet<DeliveryMethod> DeliveryMethods { get; set; }
+        public DbSet<Category> Categories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -27,6 +28,7 @@ namespace Infrastructure.Data
             modelBuilder.Entity<Product>().ToTable("Products");
             modelBuilder.Entity<ProductBrand>().ToTable("ProductBrands");
             modelBuilder.Entity<ProductType>().ToTable("ProductTypes");
+            modelBuilder.Entity<Category>().ToTable("Categories");
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }

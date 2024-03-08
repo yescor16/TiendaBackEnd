@@ -1,20 +1,26 @@
 [
   {
-    "Name": "Empresa1"
+    "Name": "Empresa1",
+    "CategoryId": 1
   },
   {
-    "Name": "Empresa2"
+    "Name": "Empresa2",
+    "CategoryId": 1
   },
   {
-    "Name": "Empresa3"
+    "Name": "Empresa3",
+    "CategoryId": 1
   },
   {
-    "Name": "Empresa4"
+    "Name": "Empresa4",
+    "CategoryId": 1
   },
   {
-    "Name": "Empresa5"
+    "Name": "Empresa5",
+    "CategoryId": 1
   },
   {
-    "Name": "Empresa6"
+    "Name": "Empresa6",
+    "CategoryId": 2
   }
 ]

@@ -14,6 +14,9 @@
         public Store Store { get; set; }
         public int StoreId { get; set; }
 
+        public Category Category { get; set; }
+        public int CategoryId { get; set; }
+
 
     } 
 }

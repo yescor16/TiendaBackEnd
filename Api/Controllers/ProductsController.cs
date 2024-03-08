@@ -105,5 +105,25 @@ namespace Api.Controllers
             return Ok(products);
 
         }
+
+
+
+        //Productos por categoria
+        //Products by idStore
+        [HttpGet("GetProductsByCategory")]
+        public async Task<ActionResult<Pagination<ProductToReturnDto>>> GetProductsByCategory(
+            [FromQuery] ProductSpecParams productParams)
+        {
+            var spec = new ProductsWithTypesAndBrandsSpecification(productParams);
+            var countSpec = new ProductsWithFiltersForCountSpecification(productParams);
+
+            var totalItems = await productRepo.CountAsync(countSpec);
+            var products = await productRepo.ListAsync(spec);
+
+            var data = Mapper.Map<IReadOnlyList<ProductToReturnDto>>(products);
+
+            return Ok(new Pagination<ProductToReturnDto>(productParams.PageIndex,
+                productParams.PageSize, totalItems, data));
+        }
     }
 }

@@ -15,12 +15,14 @@ namespace Core.Specifications
             (string.IsNullOrEmpty(productParams.Search) || x.Name.ToLower().Contains(productParams.Search)) &&
             (!productParams.BrandId.HasValue || x.ProductBrandId == productParams.BrandId) &&
             (!productParams.TypeId.HasValue || x.ProductTypeId == productParams.TypeId) &&
-            (!productParams.StoreId.HasValue || x.StoreId == productParams.StoreId)
+            (!productParams.StoreId.HasValue || x.StoreId == productParams.StoreId) &&
+            (!productParams.CategoryId.HasValue || x.CategoryId == productParams.CategoryId)
             )
         {
             AddInclude(x => x.ProductType);
             AddInclude(x => x.ProductBrand);
             AddInclude(x => x.Store);
+            AddInclude(x => x.Category);
             AddOrderBy(x => x.Name);
             ApplyPaging(productParams.PageSize * (productParams.PageIndex - 1),
                 productParams.PageSize);

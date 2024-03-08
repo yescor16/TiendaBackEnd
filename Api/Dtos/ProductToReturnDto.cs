@@ -12,5 +12,6 @@ namespace Api.Dtos
         public string ProductType { get; set; }
         public string ProductBrand { get; set; }
         public string Store { get; set; }
+        public string Category { get; set; }
     }
 }
