@@ -87,22 +87,40 @@ namespace Api.Controllers
 
         // [Cached(6000)]
         [HttpGet("brands")]
-        public ActionResult<IReadOnlyList<ProductBrand>> GetProductBrands([FromQuery] ProductSpecParams productParams)
+        public async Task< ActionResult<IReadOnlyList<ProductBrand>>> GetProductBrands([FromQuery] ProductSpecParams productParams)
         {
-            var spec = new BrandsWithFilterId(productParams.StoreId);
-            var products = productRepo.ListAsync(spec).Result.Select(x => x.ProductBrand).Distinct();
-           
-            return Ok(products);
+
+
+            if (productParams.StoreId > 0)
+            {
+                var spec = new BrandsWithFilterId(productParams.StoreId);
+                var products = productRepo.ListAsync(spec).Result.Select(x => x.ProductBrand).Distinct();
+
+                return Ok(products);
+            }
+            else
+            {
+                return Ok(await brandRepo.ListAllAsync());
+            }
         }
 
        // [Cached(6000)]
         [HttpGet("types")]
-        public ActionResult<IReadOnlyList<ProductType>> GetProductTypes([FromQuery] ProductSpecParams productParams)
+        public async Task< ActionResult<IReadOnlyList<ProductType>>> GetProductTypes([FromQuery] ProductSpecParams productParams)
         {
-            var spec = new TypeWithFilterId(productParams.StoreId);
-            var products = productRepo.ListAsync(spec).Result.Select(x => x.ProductType).Distinct();
+            if (productParams.StoreId > 0)
+            {
+                var spec = new TypeWithFilterId(productParams.StoreId);
+                var products = productRepo.ListAsync(spec).Result.Select(x => x.ProductType).Distinct();
+                return Ok(products);
+            }
+            else
+            {
+                return Ok(await typeRepo.ListAllAsync());
+            }
+           
 
-            return Ok(products);
+          
 
         }
 
